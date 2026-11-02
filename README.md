@@ -2,6 +2,9 @@
 
 **A mailbox where humans and AI agents work together.**
 
+📌 **Official website:** [cyril-belin.github.io/HermodMail](https://cyril-belin.github.io/HermodMail/)
+(English and French — this README remains the complete technical reference.)
+
 HermodMail is an open-source webmail with a **native MCP server**: your existing
 IMAP/SMTP mailbox, one shared business engine, and permission rules that apply
 identically to the person reading mail in the browser and the agent working
@@ -335,6 +338,30 @@ transport with real MIME parsing.
 - IMAP IDLE push notifications · sieve-like rules · calendar attachments ·
   multi-select batch actions · per-folder AI auto-classification · CardDAV
   contacts.
+
+## Website
+
+The official product site lives in [`site/`](site/) — a static
+[Astro](https://astro.build) project, fully isolated from the app workspaces
+(this monorepo's `npm` scripts never touch it). It is published automatically
+to <https://cyril-belin.github.io/HermodMail/> by
+[`.github/workflows/deploy-site.yml`](.github/workflows/deploy-site.yml) when
+files under `site/` change on `main` (manual runs are also available from the
+Actions tab). English is the default language; the French version lives under
+`/fr/`.
+
+To work on the site locally:
+
+```bash
+cd site
+npm install
+npm run dev       # dev server (URL printed in the terminal)
+npm run build     # static output in site/dist/ (what Pages publishes)
+```
+
+Screenshots shown on the site come from `docs/screenshots/` — replace them
+there and copy into `site/src/assets/` to refresh the site. No backend, no
+secrets, and no mail infrastructure are involved in serving the site.
 
 ## License
 
