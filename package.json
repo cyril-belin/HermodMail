@@ -1,0 +1,22 @@
+{
+  "name": "hermodmail",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HermodMail — modern open-source webmail for humans and AI agents",
+  "license": "AGPL-3.0-or-later",
+  "workspaces": [
+    "apps/server",
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @hermodmail/server",
+    "dev:web": "npm run dev --workspace @hermodmail/web",
+    "build": "npm run build --workspace @hermodmail/web && npm run build --workspace @hermodmail/server",
+    "start": "node apps/server/dist/index.js",
+    "test": "npm run test --workspace @hermodmail/server && npm run test --workspace @hermodmail/web",
+    "typecheck": "npm run typecheck --workspace @hermodmail/server && npm run typecheck --workspace @hermodmail/web"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

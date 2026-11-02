@@ -1,0 +1,28 @@
+# HermodMail — docker-compose.yml (works with Podman Compose too)
+services:
+  hermodmail:
+    build: .
+    image: hermodmail:latest
+    container_name: hermodmail
+    restart: unless-stopped
+    ports:
+      - "8667:8667"
+    environment:
+      # Generate with: openssl rand -base64 48
+      - HERMODMAIL_SECRET=${HERMODMAIL_SECRET:?set HERMODMAIL_SECRET in .env}
+      # Optional: AI provider defaults (configurable in the UI by an admin)
+      # - OLLAMA_BASE_URL=http://host.containers.internal:11434
+    volumes:
+      - hermodmail-data:/data
+
+  # Optional: local AI (no paid dependency). Uncomment to run Ollama alongside.
+  # ollama:
+  #   image: docker.io/ollama/ollama:latest
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ollama-data:/root/.ollama
+  #   # GPU users: add your runtime's GPU flags here.
+
+volumes:
+  hermodmail-data:
+  # ollama-data:

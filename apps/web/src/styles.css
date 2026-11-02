@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #fafafa;
+  --color-foreground: #18181b;
+  --color-card: #ffffff;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-border: #e4e4e7;
+  --color-primary: #16a34a;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #18181b;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-accent: #f0fdf4;
+  --color-accent-foreground: #14532d;
+  --color-ring: #16a34a;
+  --radius: 0.5rem;
+}
+
+/*
+ * Dark theme: the semantic utilities (bg-card, text-muted-foreground…) all
+ * reference var(--color-*), so overriding the variables under html.dark is
+ * enough — no component changes needed. Chosen via lib/theme.ts (auto/light/
+ * dark); `color-scheme` is set from JS so native widgets follow too.
+ */
+html.dark {
+  --color-background: #101013;
+  --color-foreground: #e4e4e7;
+  --color-card: #18181b;
+  --color-muted: #26262b;
+  --color-muted-foreground: #a1a1aa;
+  --color-border: #2e2e33;
+  --color-primary: #22c55e;
+  --color-primary-foreground: #052e16;
+  --color-secondary: #26262b;
+  --color-secondary-foreground: #e4e4e7;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-accent: #142a1b;
+  --color-accent-foreground: #bbf7d0;
+  --color-ring: #22c55e;
+}
+
+/* Email links and scrollbars need explicit variants (raw colors in styles). */
+:root { --email-link: #15803d; --scrollbar-thumb: #d4d4d8; }
+html.dark { --email-link: #4ade80; --scrollbar-thumb: #3f3f46; }
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+/* Email reader sanitized content */
+.email-body {
+  @apply text-[15px] leading-relaxed break-words;
+}
+.email-body img { max-width: 100%; height: auto; }
+.email-body a { color: var(--email-link); text-decoration: underline; }
+.email-body blockquote {
+  border-left: 3px solid var(--color-border);
+  margin: 0.5rem 0; padding-left: 0.75rem; color: var(--color-muted-foreground);
+}
+.email-body pre {
+  background: var(--color-muted); border-radius: 0.375rem; padding: 0.5rem 0.75rem;
+  overflow-x: auto; font-size: 13px;
+}
+.email-body table { border-collapse: collapse; }
+.email-body td, .email-body th { border: 1px solid var(--color-border); padding: 4px 8px; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* AI Markdown panels (headings, lists, inline code) — sober, matching the UI */
+.markdown-text { @apply text-sm leading-relaxed; }
+.markdown-text p { @apply my-1.5; }
+.markdown-text h3, .markdown-text h4, .markdown-text h5, .markdown-text h6 {
+  @apply mt-3 mb-1 font-semibold text-[15px];
+}
+.markdown-text ul, .markdown-text ol { @apply my-1.5 pl-5; }
+.markdown-text ul { @apply list-disc; }
+.markdown-text ol { @apply list-decimal; }
+.markdown-text li { @apply my-0.5; }
+.markdown-text code {
+  @apply rounded bg-muted px-1 py-0.5 text-[12px];
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.markdown-text hr { @apply my-2 border-border; }
