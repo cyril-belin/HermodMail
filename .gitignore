@@ -16,3 +16,4 @@ coverage/
 .dbg-del.mjs
 *.key
 *.log
+!.env.example
