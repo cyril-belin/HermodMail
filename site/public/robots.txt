@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cyril-belin.github.io/HermodMail/sitemap-index.xml

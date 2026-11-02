@@ -1,0 +1,99 @@
+---
+import { Image } from 'astro:assets';
+import darkTheme from '../../assets/dark-theme.png';
+
+interface Props { t: any; }
+const { t } = Astro.props;
+const REPO = 'https://github.com/cyril-belin/HermodMail';
+---
+
+<section class="section" id="open-source" aria-labelledby="oss-title">
+  <div class="wrap">
+    <div class="grid">
+      <div class="head reveal">
+        <p class="eyebrow">{t.opensource.eyebrow}</p>
+        <h2 id="oss-title" class="h2">{t.opensource.title}</h2>
+        <p class="lead">{t.opensource.lead}</p>
+
+        <div class="points">
+          {t.opensource.points.map((p) => (
+            <div class="point">
+              <h3>{p.title}</h3>
+              <p>{p.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="ctas">
+          <a class="btn btn-solid" href={REPO} target="_blank" rel="noopener">{t.opensource.links.code}</a>
+          <a class="btn btn-ghost" href={`${REPO}/issues`} target="_blank" rel="noopener">{t.opensource.links.issues}</a>
+          <a class="btn btn-ghost" href={`${REPO}/blob/main/LICENSE`} target="_blank" rel="noopener">{t.opensource.links.license}</a>
+        </div>
+
+        <p class="stage">{t.opensource.stage}</p>
+      </div>
+
+      <figure class="reveal shot-frame">
+        <div class="shot">
+          <Image
+            src={darkTheme}
+            alt={t.webmail.gallery[2].caption}
+            widths={[480, 768]}
+            sizes="(max-width: 980px) 96vw, 480px"
+            formats={['avif', 'webp']}
+            quality={78}
+            loading="lazy"
+          />
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+  }
+  .points {
+    margin-top: 2.2rem;
+    display: grid;
+    gap: 1.3rem;
+  }
+  .point {
+    border-left: 2px solid var(--hairline-strong);
+    padding-left: 1.2rem;
+  }
+  .point h3 {
+    font-size: 1.02rem;
+    font-weight: 620;
+    letter-spacing: -0.01em;
+  }
+  .point p {
+    margin-top: 0.35rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+    line-height: 1.58;
+    max-width: 56ch;
+  }
+  .ctas {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    margin-top: 2.2rem;
+  }
+  .ctas .btn { padding: 0.68em 1.25em; font-size: 0.92rem; }
+  .stage {
+    margin-top: 1.8rem;
+    font-size: 0.88rem;
+    color: var(--faint);
+    max-width: 60ch;
+    line-height: 1.6;
+  }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+    .shot-frame { max-width: 560px; }
+  }
+</style>

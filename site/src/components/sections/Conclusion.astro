@@ -1,0 +1,74 @@
+---
+interface Props { t: any; }
+const { t } = Astro.props;
+const REPO = 'https://github.com/cyril-belin/HermodMail';
+---
+
+<section class="conclusion" aria-labelledby="end-title">
+  <div class="wrap inner">
+    <svg class="glint" viewBox="0 0 64 64" aria-hidden="true">
+      <g stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" opacity="0.9">
+        <path d="M7 27.5h5.5"/><path d="M10 34h4"/><path d="M7 40.5h5.5"/>
+      </g>
+      <g stroke="#F4F2EC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <path d="M18.5 26.5h27a3.5 3.5 0 0 1 3.5 3.5v14a3.5 3.5 0 0 1-3.5 3.5h-27A3.5 3.5 0 0 1 15 44V30a3.5 3.5 0 0 1 3.5-3.5Z"/>
+        <path d="m15.5 29 16.5 10.5L48.5 29"/>
+      </g>
+    </svg>
+
+    <h2 id="end-title" class="display reveal" set:html={t.conclusion.title} />
+    <p class="lead reveal">{t.conclusion.lead}</p>
+    <a class="btn snow-btn reveal" href={REPO} target="_blank" rel="noopener">{t.conclusion.cta}</a>
+  </div>
+</section>
+
+<style>
+  .conclusion {
+    background:
+      radial-gradient(120% 90% at 50% 0%, #0f4534 0%, var(--evergreen-deep) 55%);
+    color: var(--snow);
+    padding-block: clamp(6rem, 12vw, 9.5rem);
+    text-align: center;
+    position: relative;
+    overflow: clip;
+  }
+  .conclusion::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(79, 209, 165, 0.6), transparent);
+  }
+  .inner {
+    display: grid;
+    justify-items: center;
+    gap: 1.6rem;
+  }
+  .glint {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: rgba(244, 242, 236, 0.06);
+    border: 1px solid var(--snow-faint);
+    padding: 8px;
+  }
+  h2.display {
+    font-size: clamp(2.3rem, 5.4vw, 4rem);
+    max-width: 22ch;
+  }
+  h2.display em { color: #4fd1a5; }
+  .lead {
+    color: var(--snow-muted);
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+  .snow-btn {
+    margin-top: 0.6rem;
+    background: var(--snow);
+    color: var(--evergreen);
+    font-weight: 600;
+    box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.5);
+  }
+  .snow-btn:hover { transform: translateY(-1px); background: #fff; }
+</style>

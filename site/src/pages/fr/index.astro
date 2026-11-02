@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import { fr } from '../../i18n/fr';
+import Hero from '../../components/sections/Hero.astro';
+import Problem from '../../components/sections/Problem.astro';
+import Story from '../../components/sections/Story.astro';
+import Webmail from '../../components/sections/Webmail.astro';
+import Mcp from '../../components/sections/Mcp.astro';
+import Permissions from '../../components/sections/Permissions.astro';
+import Models from '../../components/sections/Models.astro';
+import Developers from '../../components/sections/Developers.astro';
+import OpenSource from '../../components/sections/OpenSource.astro';
+import Conclusion from '../../components/sections/Conclusion.astro';
+
+const t = fr;
+---
+
+<Base lang="fr" path="/fr/" title={t.meta.title} description={t.meta.description} t={t}>
+  <Hero t={t} BASE={import.meta.env.BASE_URL} lang="fr" />
+  <Problem t={t} />
+  <Story t={t} />
+  <Webmail t={t} />
+  <Mcp t={t} />
+  <Permissions t={t} />
+  <Models t={t} />
+  <Developers t={t} BASE={import.meta.env.BASE_URL} />
+  <OpenSource t={t} />
+  <Conclusion t={t} />
+</Base>

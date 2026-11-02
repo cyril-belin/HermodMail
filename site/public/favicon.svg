@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="15" fill="#0C3B2E"/>
+  <!-- dispatch lines -->
+  <g stroke="#0E9F6E" stroke-width="3" stroke-linecap="round" opacity="0.9">
+    <path d="M7 27.5h5.5"/>
+    <path d="M10 34h4"/>
+    <path d="M7 40.5h5.5"/>
+  </g>
+  <!-- envelope, flying right -->
+  <g stroke="#F4F2EC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M18.5 26.5h27a3.5 3.5 0 0 1 3.5 3.5v14a3.5 3.5 0 0 1-3.5 3.5h-27A3.5 3.5 0 0 1 15 44V30a3.5 3.5 0 0 1 3.5-3.5Z"/>
+    <path d="m15.5 29 16.5 10.5L48.5 29"/>
+  </g>
+</svg>

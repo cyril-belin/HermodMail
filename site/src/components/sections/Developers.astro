@@ -1,0 +1,247 @@
+---
+interface Props { t: any; BASE: string; }
+const { t, BASE } = Astro.props;
+const REPO = 'https://github.com/cyril-belin/HermodMail';
+
+const dockerCmd = `git clone https://github.com/cyril-belin/HermodMail.git
+cd HermodMail
+cp .env.example .env
+# ${t.developers.docker.comment1.replace('# ', '')}
+docker compose up -d
+# ${t.developers.docker.comment2.replace('# ', '')}`;
+
+const sourceCmd = `git clone https://github.com/cyril-belin/HermodMail.git
+cd HermodMail
+npm install
+
+# ${t.developers.source.comment1.replace('# ', '')}
+npm run dev        # ${t.developers.source.comment2.replace('# ', '')}
+npm run dev:web
+
+# ${t.developers.source.comment3.replace('# ', '')}
+npm run build
+PORT=8667 HOST=0.0.0.0 HERMODMAIL_WEB_DIST=apps/web/dist node apps/server/dist/index.js`;
+
+const mcpConfig = `{
+  "mcpServers": {
+    "hermodmail": {
+      "type": "http",
+      "url": "http://localhost:8667/mcp",
+      "headers": { "Authorization": "Bearer hmt_..." }
+    }
+  }
+}`;
+
+const tabs = [
+  { id: 'docker', label: t.developers.tabs.docker, cmd: dockerCmd, result: t.developers.docker.result },
+  { id: 'source', label: t.developers.tabs.source, cmd: sourceCmd, result: t.developers.source.firstRun },
+  { id: 'mcp', label: t.developers.tabs.mcp, cmd: mcpConfig, result: '' },
+];
+---
+
+<section class="section" id="developers" aria-labelledby="dev-title">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">{t.developers.eyebrow}</p>
+      <h2 id="dev-title" class="h2">{t.developers.title}</h2>
+      <p class="lead">{t.developers.lead}</p>
+    </div>
+
+    <div class="terminal card reveal">
+      <div class="tabs" role="tablist" aria-label={t.developers.eyebrow}>
+        {tabs.map((tab, i) => (
+          <button
+            class="tab mono"
+            role="tab"
+            id={`tab-dev-${tab.id}`}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            aria-controls={`panel-dev-${tab.id}`}
+            tabindex={i === 0 ? 0 : -1}
+            type="button"
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {tabs.map((tab, i) => (
+        <div
+          class="panel"
+          role="tabpanel"
+          id={`panel-dev-${tab.id}`}
+          aria-labelledby={`tab-dev-${tab.id}`}
+          hidden={i !== 0}
+        >
+          <div class="codeblock">
+            <button class="copy" type="button" data-copy={tab.cmd} data-copied={t.developers.copied} aria-label={t.developers.copy}>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                <rect x="5.5" y="5.5" width="8" height="8" rx="1.6"/>
+                <path d="M10.5 5.5v-2A1.5 1.5 0 0 0 9 2H4A1.5 1.5 0 0 0 2.5 3.5v5A1.5 1.5 0 0 0 4 10h1.5" stroke-linecap="round"/>
+              </svg>
+              <span class="copy-label">{t.developers.copy}</span>
+            </button>
+            <pre><code>{tab.cmd}</code></pre>
+          </div>
+          {tab.result && <p class="result">{tab.result}</p>}
+        </div>
+      ))}
+    </div>
+
+    <div class="security reveal">
+      <h3>{t.developers.mcp.securityTitle}</h3>
+      <p>{t.developers.mcp.security}</p>
+      <a class="btn btn-ghost" href={`${REPO}#readme`} target="_blank" rel="noopener">
+        {t.developers.mcp.readmeLink}
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 11 11 3M5 3h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Tabs (shared logic shape with gallery, isolated per component)
+  const root = document.querySelector<HTMLElement>('#developers');
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    const select = (index: number) => {
+      tabs.forEach((tab, i) => {
+        const active = i === index;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        panels[i].hidden = !active;
+      });
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', (e) => {
+        let next = -1;
+        if (e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        if (next >= 0) { e.preventDefault(); select(next); tabs[next].focus(); }
+      });
+    });
+
+    // Copy buttons
+    root.querySelectorAll<HTMLButtonElement>('.copy').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const text = btn.dataset.copy ?? '';
+        try {
+          await navigator.clipboard.writeText(text);
+          const label = btn.querySelector<HTMLElement>('.copy-label');
+          const done = label?.dataset.done;
+          if (label && done) {
+            label.textContent = done;
+            btn.classList.add('copied');
+            setTimeout(() => {
+              label.textContent = label.dataset.orig ?? '';
+              btn.classList.remove('copied');
+            }, 1600);
+          }
+        } catch {
+          /* clipboard unavailable — silently keep the manual-copy path */
+        }
+      });
+      const label = btn.querySelector<HTMLElement>('.copy-label');
+      if (label) {
+        label.dataset.orig = label.textContent ?? '';
+        label.dataset.done = btn.dataset.copied ?? 'Copied';
+      }
+    });
+  }
+</script>
+
+<style>
+  .terminal {
+    overflow: hidden;
+  }
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--hairline);
+    background: linear-gradient(#faf9f5, #f4f2ec);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 0.9rem 1.3rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected='true'] {
+    color: var(--evergreen);
+    border-bottom-color: var(--green);
+    font-weight: 500;
+  }
+  .panel { padding: 1.4rem clamp(1rem, 3vw, 1.8rem) 1.6rem; }
+  .codeblock {
+    position: relative;
+    background: #101413;
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+  }
+  pre {
+    margin: 0;
+    padding: 1.3rem 1.5rem;
+    overflow-x: auto;
+  }
+  code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    color: #cfe8dd;
+    font-size: 0.85rem;
+    line-height: 1.75;
+    white-space: pre;
+    font-weight: 400;
+  }
+  .copy {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.4em 0.75em;
+    font-size: 0.76rem;
+    color: rgba(207, 232, 221, 0.75);
+    border: 1px solid rgba(207, 232, 221, 0.2);
+    border-radius: 7px;
+    background: rgba(16, 20, 19, 0.8);
+    transition: all 0.2s;
+  }
+  .copy svg { width: 13px; height: 13px; }
+  .copy:hover { color: #fff; border-color: rgba(207, 232, 221, 0.45); }
+  .copy.copied { color: #4fd1a5; border-color: #4fd1a5; }
+  .result {
+    margin-top: 0.9rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .security {
+    margin-top: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.6rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .security h3 {
+    font-size: 1.02rem;
+    font-weight: 620;
+  }
+  .security p {
+    margin-top: 0.4rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+    max-width: 62ch;
+    line-height: 1.6;
+  }
+  .security .btn { flex: none; margin-top: 0.2rem; }
+</style>
