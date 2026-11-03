@@ -177,7 +177,7 @@ function json(obj: unknown): string {
 function buildMcpServer(getCtx: () => AuthContext, deps: McpDeps): McpServer {
   const { engine, aiService } = deps
   const server = new McpServer(
-    { name: 'hermodmail', version: '0.1.0' },
+    { name: 'hermodmail', version: '0.1.0-beta.1' },
     {
       instructions:
         'HermodMail MCP server: access mailboxes shared with you. All operations are permission-scoped by the token; send, folder management and message deletion require explicit grants (mail:send, folder:write, folder:delete, mail:delete). create_draft saves a real IMAP draft without sending anything; sending mail requires the mail:send scope via send_message. Folder tools operate on the real IMAP server: create_folder, rename_folder (folder:write) and delete_folder (folder:delete, confirm=true needed for non-empty folders).',

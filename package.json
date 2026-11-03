@@ -1,6 +1,6 @@
 {
   "name": "hermodmail",
-  "version": "0.1.0",
+  "version": "0.1.0-beta.1",
   "private": true,
   "description": "HermodMail — modern open-source webmail for humans and AI agents",
   "license": "AGPL-3.0-or-later",
