@@ -8,6 +8,12 @@
     "apps/server",
     "apps/web"
   ],
+  "overrides": {
+    "@fastify/static": {
+      "glob": "^14.0.2"
+    },
+    "vite": "^7.3.7"
+  },
   "scripts": {
     "dev": "npm run dev --workspace @hermodmail/server",
     "dev:web": "npm run dev --workspace @hermodmail/web",
