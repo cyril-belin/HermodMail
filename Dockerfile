@@ -1,16 +1,22 @@
 # ---- Stage 1: build web client -------------------------------------------
 FROM node:24-slim AS web-build
 WORKDIR /build
+# Copy the root manifest + lockfile so npm ci installs the exact tested
+# dependency tree — including the workspace overrides (patched glob 14,
+# single vite 7). A bare npm install would ignore them and reintroduce
+# vulnerable transitive versions.
+COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
-RUN npm install --workspace @hermodmail/web --no-audit --no-fund
+RUN npm ci --workspace @hermodmail/web --no-audit --no-fund
 COPY apps/web apps/web
 RUN npm run build --workspace @hermodmail/web
 
 # ---- Stage 2: build server (TypeScript) ------------------------------------
 FROM node:24-slim AS server-build
 WORKDIR /build
+COPY package.json package-lock.json ./
 COPY apps/server/package.json apps/server/package.json
-RUN npm install --workspace @hermodmail/server --no-audit --no-fund
+RUN npm ci --workspace @hermodmail/server --no-audit --no-fund
 COPY apps/server apps/server
 RUN npm run build --workspace @hermodmail/server
 

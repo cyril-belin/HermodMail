@@ -2,6 +2,9 @@
 interface Props { t: any; }
 const { t } = Astro.props;
 const REPO = 'https://github.com/cyril-belin/HermodMail';
+// Direct link to the current public beta — GitHub treats pre-releases as
+// non-latest, so /releases/latest would NOT resolve to it.
+const RELEASE = 'https://github.com/cyril-belin/HermodMail/releases/tag/v0.1.0-beta.1';
 ---
 
 <section class="conclusion" aria-labelledby="end-title">
@@ -18,7 +21,14 @@ const REPO = 'https://github.com/cyril-belin/HermodMail';
 
     <h2 id="end-title" class="display reveal" set:html={t.conclusion.title} />
     <p class="lead reveal">{t.conclusion.lead}</p>
-    <a class="btn snow-btn reveal" href={REPO} target="_blank" rel="noopener">{t.conclusion.cta}</a>
+    <a class="btn snow-btn reveal" href={RELEASE} target="_blank" rel="noopener">{t.conclusion.cta}</a>
+    <nav class="concl-links reveal" aria-label={t.conclusion.cta}>
+      <a href={REPO} target="_blank" rel="noopener">{t.conclusion.links.source}</a>
+      <span aria-hidden="true">·</span>
+      <a href={`${REPO}#download--install`} target="_blank" rel="noopener">{t.conclusion.links.docs}</a>
+      <span aria-hidden="true">·</span>
+      <a href={`${REPO}/issues`} target="_blank" rel="noopener">{t.conclusion.links.issues}</a>
+    </nav>
   </div>
 </section>
 
@@ -71,4 +81,22 @@ const REPO = 'https://github.com/cyril-belin/HermodMail';
     box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.5);
   }
   .snow-btn:hover { transform: translateY(-1px); background: #fff; }
+  .concl-links {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.2rem;
+    font-size: 0.92rem;
+    color: var(--snow-muted);
+  }
+  .concl-links a {
+    color: var(--snow-muted);
+    text-decoration: underline;
+    text-decoration-color: rgba(244, 242, 236, 0.25);
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+  .concl-links a:hover { color: var(--snow); }
 </style>

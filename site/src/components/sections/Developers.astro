@@ -3,24 +3,23 @@ interface Props { t: any; BASE: string; }
 const { t, BASE } = Astro.props;
 const REPO = 'https://github.com/cyril-belin/HermodMail';
 
-const dockerCmd = `git clone https://github.com/cyril-belin/HermodMail.git
+// Pin the beta tag so new users never pull an unstable future `main`.
+const dockerCmd = `git clone -b v0.1.0-beta.1 https://github.com/cyril-belin/HermodMail.git
 cd HermodMail
-cp .env.example .env
+printf 'HERMODMAIL_SECRET=%s\\n' "$(openssl rand -base64 48)" > .env
 # ${t.developers.docker.comment1.replace('# ', '')}
-docker compose up -d
+docker compose up -d --build
 # ${t.developers.docker.comment2.replace('# ', '')}`;
 
-const sourceCmd = `git clone https://github.com/cyril-belin/HermodMail.git
+const sourceCmd = `git clone -b v0.1.0-beta.1 https://github.com/cyril-belin/HermodMail.git
 cd HermodMail
-npm install
+npm ci
+npm run build
 
 # ${t.developers.source.comment1.replace('# ', '')}
-npm run dev        # ${t.developers.source.comment2.replace('# ', '')}
-npm run dev:web
-
-# ${t.developers.source.comment3.replace('# ', '')}
-npm run build
-PORT=8667 HOST=0.0.0.0 HERMODMAIL_WEB_DIST=apps/web/dist node apps/server/dist/index.js`;
+export HERMODMAIL_SECRET="$(openssl rand -base64 48)"   # keep it stable across restarts
+PORT=8667 HOST=0.0.0.0 HERMODMAIL_WEB_DIST=apps/web/dist node apps/server/dist/index.js
+# ${t.developers.source.comment2.replace('# ', '')}`;
 
 const mcpConfig = `{
   "mcpServers": {
@@ -90,7 +89,7 @@ const tabs = [
     <div class="security reveal">
       <h3>{t.developers.mcp.securityTitle}</h3>
       <p>{t.developers.mcp.security}</p>
-      <a class="btn btn-ghost" href={`${REPO}#readme`} target="_blank" rel="noopener">
+      <a class="btn btn-ghost" href={`${REPO}#download--install`} target="_blank" rel="noopener">
         {t.developers.mcp.readmeLink}
         <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 11 11 3M5 3h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>

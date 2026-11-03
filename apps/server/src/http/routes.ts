@@ -102,7 +102,7 @@ export function registerRoutes(app: FastifyInstance, deps: RouteDeps): void {
 
   // ---- auth -------------------------------------------------------------------------
 
-  app.get('/api/health', async () => ({ ok: true, name: 'hermodmail', version: '0.1.0' }))
+  app.get('/api/health', async () => ({ ok: true, name: 'hermodmail', version: '0.1.0-beta.1' }))
 
   app.get('/api/setup/status', async () => ({ needsSetup: auth.userCount() === 0 }))
 

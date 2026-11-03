@@ -9,6 +9,9 @@ interface Props {
 }
 const { BASE, t } = Astro.props;
 const REPO = 'https://github.com/cyril-belin/HermodMail';
+// Direct link to the current public beta — GitHub treats pre-releases as
+// non-latest, so /releases/latest would NOT resolve to it.
+const RELEASE = 'https://github.com/cyril-belin/HermodMail/releases/tag/v0.1.0-beta.1';
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -17,12 +20,19 @@ const REPO = 'https://github.com/cyril-belin/HermodMail';
       <p class="eyebrow">{t.hero.eyebrow}</p>
       <h1 id="hero-title" class="display" set:html={t.hero.title} />
       <p class="lead">{t.hero.lead}</p>
+      <p class="beta-pill mono" aria-label={t.hero.badge}>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 1.5 14 5v6L8 14.5 2 11V5l6-3.5Z" stroke-linejoin="round"/><path d="m5.5 8 1.8 1.8L10.8 6.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {t.hero.badge}
+      </p>
       <div class="ctas">
-        <a class="btn btn-solid" href={REPO} target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+        <a class="btn btn-solid" href={RELEASE} target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 2v8.5m0 0L4.8 7.3M8 10.5l3.2-3.2M2.5 12v1A1.5 1.5 0 0 0 4 14.5h8a1.5 1.5 0 0 0 1.5-1.5v-1" stroke-linecap="round" stroke-linejoin="round"/></svg>
           {t.hero.ctaPrimary}
         </a>
-        <a class="btn btn-ghost" href="#why">{t.hero.ctaSecondary}</a>
+        <a class="btn btn-ghost" href={REPO} target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          {t.hero.ctaSecondary}
+        </a>
       </div>
     </div>
 
@@ -71,6 +81,20 @@ const REPO = 'https://github.com/cyril-belin/HermodMail';
     margin-top: 1.4rem;
   }
   .lead { margin-top: 1.4rem; }
+  .beta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    margin-top: 1.6rem;
+    padding: 0.32em 0.9em;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--evergreen);
+    background: rgba(14, 159, 110, 0.08);
+    border: 1px solid rgba(14, 159, 110, 0.28);
+    border-radius: 99px;
+  }
+  .beta-pill svg { width: 13px; height: 13px; }
   .ctas {
     display: flex;
     gap: 0.9rem;

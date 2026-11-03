@@ -1,9 +1,15 @@
 # HermodMail
 
+[![Release](https://img.shields.io/github/v/release/cyril-belin/HermodMail?include_prereleases&sort=semver&label=release)](https://github.com/cyril-belin/HermodMail/releases/tag/v0.1.0-beta.1)
+[![Status](https://img.shields.io/badge/status-public%20beta-orange)](#release-status--compatibility)
+[![CI](https://img.shields.io/github/actions/workflow/status/cyril-belin/HermodMail/ci.yml?branch=main&label=CI)](https://github.com/cyril-belin/HermodMail/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/cyril-belin/HermodMail)](LICENSE)
+
 **A mailbox where humans and AI agents work together.**
 
 📌 **Official website:** [cyril-belin.github.io/HermodMail](https://cyril-belin.github.io/HermodMail/)
 (English and French — this README remains the complete technical reference.)
+🏷️ **First public beta:** [v0.1.0-beta.1](https://github.com/cyril-belin/HermodMail/releases/tag/v0.1.0-beta.1)
 
 HermodMail is an open-source webmail with a **native MCP server**: your existing
 IMAP/SMTP mailbox, one shared business engine, and permission rules that apply
@@ -22,6 +28,63 @@ through the API.
 │ Ollama etc. │ ◄─────────────── │                                          │
 └─────────────┘                  └──────────────────────────────────────────┘
 ```
+
+## Download & Install
+
+**Latest public pre-release: [`v0.1.0-beta.1`](https://github.com/cyril-belin/HermodMail/releases/tag/v0.1.0-beta.1)**
+(source archives are attached to the release; you are reading a beta — see
+[Release status & compatibility](#release-status--compatibility)).
+
+### Requirements
+
+- Node.js **≥ 22** (CI runs on 22 and 24) and npm — no other tooling needed for
+  a source install. Docker or Podman for the container route.
+
+### Option A — Docker / Podman
+
+```bash
+git clone -b v0.1.0-beta.1 https://github.com/cyril-belin/HermodMail.git
+cd HermodMail
+printf 'HERMODMAIL_SECRET=%s\n' "$(openssl rand -base64 48)" > .env
+docker compose up -d --build      # or: podman-compose up -d --build
+```
+
+Then open **http://localhost:8667** — the first visit asks you to create the
+admin account. All data lives in the `hermodmail-data` volume. Behind a
+reverse proxy or on a public host, also set `HERMODMAIL_COOKIE_SECURE=1` and
+`TRUST_PROXY=1` (see [VPS section](#deploying-on-a-vps-https--remote-agents)).
+
+### Option B — from source
+
+```bash
+git clone -b v0.1.0-beta.1 https://github.com/cyril-belin/HermodMail.git
+cd HermodMail
+npm ci
+npm run build
+export HERMODMAIL_SECRET="$(openssl rand -base64 48)"   # keep it stable across restarts
+PORT=8667 HOST=0.0.0.0 HERMODMAIL_WEB_DIST=apps/web/dist node apps/server/dist/index.js
+```
+
+Open **http://localhost:8667**. To run HermodMail in the background across
+reboots, wrap that last line in your favourite service manager (systemd,
+launchd, `pm2`…).
+
+### First steps
+
+1. Open the webmail → create the **admin account** (first account = admin).
+2. **Settings → Mail accounts** → add your IMAP/SMTP account (host, port,
+   TLS mode, credentials). Use the *Test* button before syncing.
+3. Browse, search (full-text), organize folders — everything works without AI.
+4. Optional: **Settings → AI** → point HermodMail at any OpenAI-compatible API
+   or a local Ollama for summaries, reply drafting and translation.
+5. Optional: **Settings → API tokens (MCP)** → create a scoped token and point
+   your agent at `http://<host>:8667/mcp` (details in
+   [MCP usage for agents](#mcp-usage-for-agents)).
+
+`HERMODMAIL_SECRET` is the master key that encrypts stored IMAP/SMTP
+credentials. Generate it once, keep it stable, and back it up together with
+the data directory — backups are not portable without it, and rotating it
+without re-entering the mail passwords makes credentials undecryptable.
 
 ## Why HermodMail exists
 
@@ -156,38 +219,6 @@ _Dark mode:_
 
 ![HermodMail in dark mode](docs/screenshots/dark-theme.png)
 
-## Installation
-
-### From source (dev)
-
-```bash
-npm install
-npm run dev          # API on :8667
-npm run dev:web      # Vite dev server on :5667 (proxies /api and /mcp)
-```
-
-Open http://localhost:5667 — the first visit asks you to create the admin
-account, then add your IMAP/SMTP account in Settings.
-
-### Production build
-
-```bash
-npm run build
-PORT=8667 HOST=0.0.0.0 HERMODMAIL_WEB_DIST=apps/web/dist node apps/server/dist/index.js
-```
-
-Requires Node ≥ 22.
-
-### Docker / Podman
-
-```bash
-cp .env.example .env            # then set HERMODMAIL_SECRET
-docker compose up -d            # or: podman-compose up -d
-```
-
-The app listens on port 8667 and stores everything in the `hermodmail-data`
-volume.
-
 ## Configuration (env)
 
 | Variable | Default | Meaning |
@@ -309,11 +340,14 @@ A's mailboxes, and a read-only token cannot send.
 
 ## Testing
 
-- **194 automated tests** (server + web): crypto, auth, sanitization, mail
+- **200 automated tests** (server + web): crypto, auth, sanitization, mail
   engine, contacts & drafts with real MIME parsing/sending, AI guardrails,
   MCP over HTTP (streamable, SSE), folder protections, reliability/chaos
   (killed IMAP connections, SMTP failures, concurrent syncs), property-based
-  checks, and a real local IMAP/SMTP fixture server.
+  checks, static web-client serving, and a real local IMAP/SMTP fixture server.
+- **Dependency audits**: `npm audit` and `npm audit --omit=dev` report
+  **zero known vulnerabilities**; both audits run in CI on every pull request
+  (Node 22 and 24).
 - **Beyond the suite**, we have run real IMAP/SMTP sessions against a live
   LWS-hosted mailbox, exercised end to end from an MCP agent — folder cycles,
   draft saving, real SMTP sending.
@@ -321,9 +355,40 @@ A's mailboxes, and a read-only token cannot send.
 ## Development
 
 ```bash
-npm run typecheck   # server + web strict TypeScript
-npm test            # 194 vitest tests
+npm install
+npm run dev          # API on :8667
+npm run dev:web      # Vite dev server on :5667 (proxies /api and /mcp)
+
+npm run typecheck    # server + web strict TypeScript
+npm test             # 200 vitest tests
 ```
+
+Open http://localhost:5667 — the first visit asks you to create the admin
+account, then add your IMAP/SMTP account in Settings.
+
+## Release status & compatibility
+
+**Status: public beta (`v0.1.0-beta.1`).** HermodMail works today and is
+actively developed. This is a beta, not a finished 1.0: expect rough edges,
+and **breaking changes (API, database schema, configuration) remain possible
+before 1.0** — they will be called out in release notes.
+
+- **Node.js**: ≥ 22 required (CI verifies 22 and 24).
+- **Tested install paths**:
+  - Source install — exercised end to end from a clean source archive:
+    `npm ci` → build → serve → admin setup → login → data survives a restart
+    (macOS arm64 locally; Ubuntu on CI).
+  - Docker/Podman — `Dockerfile` (multi-stage, non-root, healthcheck) and
+    `docker-compose.yml` are provided and reviewed; the container build is
+    **not yet exercised by CI**. Reports from container users are welcome in
+    [Issues](https://github.com/cyril-belin/HermodMail/issues).
+- **Backups**: back up the data directory (`hermodmail.sqlite` + WAL files)
+  **and** `HERMODMAIL_SECRET` together. SQLite migrations run automatically at
+  startup and are forward-only.
+- **Updating**: fetch the new tag, `npm ci && npm run build`, restart with the
+  same `HERMODMAIL_SECRET` and data directory. Do not rotate the secret
+  casually (see [Download & Install](#download--install)).
+- **Bugs and feedback**: [GitHub Issues](https://github.com/cyril-belin/HermodMail/issues).
 
 Layout: `apps/server/src/core` (engine: auth, mail, ai, contacts — no transport
 knowledge), `apps/server/src/http` (thin REST adapter), `apps/server/src/mcp`
