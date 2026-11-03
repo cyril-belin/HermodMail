@@ -113,8 +113,9 @@ export async function buildApp(deps: AppDeps & { trustProxy?: boolean }): Promis
       wildcard: true,
       immutable: true,
       maxAge: '1h',
-      setHeaders: (res: unknown, filePath: string) => {
-        if (filePath.endsWith('index.html')) (res as { setHeader: (k: string, v: string) => void }).setHeader('cache-control', 'no-cache')
+      // @fastify/static >=9 passes the Fastify reply (was the raw res before).
+      setHeaders: (reply: FastifyReply, filePath: string) => {
+        if (filePath.endsWith('index.html')) reply.header('cache-control', 'no-cache')
       },
     })
     app.setNotFoundHandler(async (req, reply) => {
