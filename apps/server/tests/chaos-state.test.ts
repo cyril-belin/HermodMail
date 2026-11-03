@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import Database from 'better-sqlite3'
 import { openInMemoryDatabase, openDatabase, type DB } from '../src/db/database.js'
@@ -109,10 +110,13 @@ describe('Round 6 — SQLite under real concurrency and interruption', () => {
     const dataDir = fs.mkdtempSync('/tmp/hm-restart-')
     try {
       const serverJs = path.join(dataDir, 'server.mjs')
+      // Resolve the built server relative to this test file (the dist is
+      // produced by `npm run build` before the tests) — never a machine-
+      // specific absolute path, so the suite runs anywhere.
       fs.writeFileSync(serverJs, `
         process.env.PORT = '0';
         process.env.HOST = '127.0.0.1';
-        import('/Users/cyril/Desktop/HermodMail/apps/server/dist/index.js');
+        import(${JSON.stringify(fileURLToPath(new URL('../dist/index.js', import.meta.url)))});
       `)
       const child = spawn(process.execPath, [serverJs], {
         env: { ...process.env, HERMODMAIL_DATA_DIR: dataDir, PORT: '8671', HOST: '127.0.0.1' },

@@ -64,8 +64,9 @@ export const nodemailerSender: SmtpSender = async (smtp, raw, envelope, messageI
     })
     return {
       messageId: String(info.messageId ?? messageId),
-      accepted: (info.accepted ?? []).map((a) => (typeof a === 'string' ? a : a.address)),
-      rejected: (info.rejected ?? []).map((a) => (typeof a === 'string' ? a : a.address)),
+      // nodemailer >=8 types accepted/rejected as plain string[] (SMTP transport).
+      accepted: info.accepted ?? [],
+      rejected: info.rejected ?? [],
     }
   } catch (err) {
     const { outcome, reason } = classifySmtpFailure(err)
