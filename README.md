@@ -4,6 +4,7 @@
 [![Status](https://img.shields.io/badge/status-public%20beta-orange)](#release-status--compatibility)
 [![CI](https://img.shields.io/github/actions/workflow/status/cyril-belin/HermodMail/ci.yml?branch=main&label=CI)](https://github.com/cyril-belin/HermodMail/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/cyril-belin/HermodMail)](LICENSE)
+[![M8ven Verified](https://m8ven.ai/badge/mcp/cyril-belin-hermodmail-17s5pu?variant=verified&v=fe93086c2e4c79d83b21aa59e06dfa6d)](https://m8ven.ai/mcp/cyril-belin-hermodmail-17s5pu?s=readme)
 
 **A mailbox where humans and AI agents work together.**
 
