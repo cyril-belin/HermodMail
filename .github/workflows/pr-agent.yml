@@ -1,0 +1,52 @@
+# PR-Agent: automatic AI code review for same-repository pull requests.
+# Add a GEMINI_API_KEY secret to the repository after merging this workflow.
+# Fork pull requests and draft pull requests are intentionally excluded.
+name: PR Agent (Gemini review)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-agent-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ai-review:
+    name: Review changed code
+    if: >-
+      ${{ github.event.sender.type != 'Bot' &&
+          !github.event.pull_request.draft &&
+          github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Check Gemini API key
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::error::Configure GEMINI_API_KEY in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Review pull request with PR-Agent
+        # The-PR-Agent/pr-agent v0.50.0 (immutable commit pin)
+        uses: the-pr-agent/pr-agent@e673a02076ce09a4726c3d0c3cc85780e59ca52b
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          config.model: "gemini/gemini-3.8-flash"
+          config.fallback_models: '[]'
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "false"
+          github_action_config.auto_improve: "false"
+          github_action_config.pr_actions: '["opened", "reopened", "synchronize", "ready_for_review"]'
+          pr_reviewer.num_max_findings: "5"
+          pr_reviewer.extra_instructions: "Review this repository only. Prioritize authentication, authorization, secret handling, IMAP/SMTP safety, SQLite migrations, and regressions in the changed code. Avoid unrelated refactoring."
